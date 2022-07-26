@@ -1,12 +1,21 @@
-# generate esignature - pull data from Azure AD
+﻿# generate esignature - pull data from Azure AD
 # search by email address
 
 #Get-ChildItem Env: | Sort Name
 $UserAppData = $Env:APPDATA
 
 $DateStamp = (Get-Date -format ddMMMyyyy)
+#$eSignaturePath = "C:\Users\nate.earnest\OneDrive\Development\DoubleStar\esig vs PowerShell\Generated\"
 $eSignaturePath = "$UserAppData\Microsoft\Signatures\"
 
+
+######################################################
+# CONNECT TO OFFICE 365 via PowerShell
+######################################################
+write-host "Connecting to Office 365"
+$LiveCred = Get-Credential 
+Connect-AzureAD -Credential $LiveCred
+######################################################
 
 Write-Host "Gathering basic information..." -ForegroundColor Yellow
 $UPNorEmail = Read-host "Enter the email address of the user?"
@@ -26,7 +35,7 @@ if (Get-AzureADUser -Filter "UserPrincipalName eq '$UPNorEmail'")
     $FileName = "esig_" + $DisplayName + "_"+ $Title + "_" + $DateStamp
     $FileName = $FileName -replace(" ","")
 
-    $MyeSignaturePath = $eSignaturePath + $FileName + "\"
+    $MyeSignaturePath = $eSignaturePath + $FileName 
     if (!(Test-Path $eSignaturePath))
     {
         #path doesnt exist, create
@@ -90,4 +99,16 @@ if (Get-AzureADUser -Filter "UserPrincipalName eq '$UPNorEmail'")
 
     Add-Content -Path $htmlFilePath -Value "</table>"
     Add-Content -Path $htmlFilePath -Value "</body></html>"
+
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/njearnest/esig/main/32x32-facebook.png" -OutFile $($eSignaturePath + "32x32-facebook.png")
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/njearnest/esig/main/32x32-linkedin.png" -OutFile $($eSignaturePath + "32x32-linkedin.png")
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/njearnest/esig/main/32x32-twitter.png" -OutFile $($eSignaturePath + "32x32-twitter.png")
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/njearnest/esig/main/32x32-youtube.png" -OutFile $($eSignaturePath + "32x32-youtube.png")
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/njearnest/esig/main/D-Star-Logo-all-rgb.png" -OutFile $($eSignaturePath + "D-Star-Logo-all-rgb.png")
 }
+
+######################################################
+# END / CLOSE ALL SESSIONS!
+######################################################
+write-host "Disconnecting from Office 365"
+Remove-PSSession $Session
