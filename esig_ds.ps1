@@ -1,11 +1,10 @@
-﻿# generate esignature - pull data from Azure AD
+# generate esignature - pull data from Azure AD
 # search by email address
 
 #Get-ChildItem Env: | Sort Name
 $UserAppData = $Env:APPDATA
 
 $DateStamp = (Get-Date -format ddMMMyyyy)
-#$eSignaturePath = "C:\Users\nate.earnest\OneDrive\Development\DoubleStar\esig vs PowerShell\Generated\"
 $eSignaturePath = "$UserAppData\Microsoft\Signatures\"
 
 
